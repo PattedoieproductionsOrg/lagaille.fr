@@ -1,0 +1,114 @@
+---
+const artists = [
+	{
+		name: "Alex 'Durendal'",
+		tagline: "L'humour tranchant comme une épée.",
+		image: "/artist_alex.webp"
+	},
+	{
+		name: "Sarah V.",
+		tagline: "La vie quotidienne, mais en pire.",
+		image: "/artist_sarah.webp"
+	},
+	{
+		name: "Karim le Sage",
+		tagline: "Philosophie de comptoir et rires garantis.",
+		image: "/artist_karim.webp"
+	}
+];
+---
+
+<section class="artists">
+	<div class="container">
+		<h2>Nos Artistes</h2>
+		<div class="carousel">
+			{artists.map(artist => (
+				<div class="artist-card">
+					<div class="image-wrapper">
+						<img src={artist.image} alt={artist.name} loading="lazy" />
+					</div>
+					<div class="card-content">
+						<h3>{artist.name}</h3>
+						<p>{artist.tagline}</p>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.artists {
+		padding: 4rem 0;
+		background: #141418;
+		overflow: hidden;
+	}
+	
+	h2 {
+		font-size: 3rem;
+		margin-bottom: 3rem;
+		padding-left: 1.5rem;
+	}
+
+	.carousel {
+		display: flex;
+		gap: 2rem;
+		overflow-x: auto;
+		padding: 1rem 1.5rem 3rem;
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+	}
+	
+	.artist-card {
+		flex: 0 0 300px;
+		scroll-snap-align: start;
+		background: var(--color-card-bg);
+		border-radius: 1rem;
+		overflow: hidden;
+		transition: transform 0.3s ease;
+	}
+	
+	.artist-card:hover {
+		transform: scale(1.02);
+	}
+	
+	.image-wrapper {
+		height: 350px;
+		background: #2a2a30;
+	}
+	
+	.image-wrapper img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	
+	.card-content {
+		padding: 1.5rem;
+	}
+	
+	h3 {
+		font-size: 1.5rem;
+		margin-bottom: 0.5rem;
+		color: var(--color-text-main);
+	}
+	
+	p {
+		font-size: 1rem;
+		color: var(--color-text-muted);
+	}
+	
+	/* Scrollbar Styling */
+	.carousel::-webkit-scrollbar {
+		height: 8px;
+	}
+	
+	.carousel::-webkit-scrollbar-track {
+		background: rgba(255, 255, 255, 0.05);
+	}
+	
+	.carousel::-webkit-scrollbar-thumb {
+		background: var(--color-text-muted);
+		border-radius: 4px;
+	}
+</style>
