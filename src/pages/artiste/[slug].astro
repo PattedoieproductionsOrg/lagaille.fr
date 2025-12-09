@@ -1,96 +1,180 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { artists } from '../../data/artists';
+import Layout from "../../layouts/Layout.astro";
+import { artists } from "../../data/artists";
 
 export function getStaticPaths() {
-  return artists.map(artist => ({
-    params: { slug: artist.slug },
-    props: { artist },
-  }));
+    return artists.map((artist) => ({
+        params: { slug: artist.slug },
+        props: { artist },
+    }));
 }
 
 const { artist } = Astro.props;
 ---
 
 <Layout title={`${artist.name} - Pattedoie Productions`}>
-  <main class="artist-page">
-    <div class="container nav-container">
-      <a href={import.meta.env.BASE_URL} class="back-link">
-        ← Retour à l'accueil
-      </a>
-    </div>
-
-    <section class="artist-hero">
-      <div class="container hero-inner">
-        <div class="image-col">
-            <div class="image-wrapper">
-                <img src={artist.image} alt={artist.name} />
-            </div>
+    <main class="artist-page">
+        <div class="container nav-container">
+            <a href={import.meta.env.BASE_URL} class="back-link">
+                ← Retour à l'accueil de Pattedoie Productions.
+            </a>
         </div>
-        <div class="content-col">
-            <h1>{artist.name}</h1>
-            <p class="tagline">{artist.tagline}</p>
-            
-            <div class="bio">
-                {artist.description.split('\n').map((paragraph) => (
-                    <p>{paragraph}</p>
-                ))}
-            </div>
 
-            <div class="socials">
-                {artist.instagram && (
-                    <a href={artist.instagram} target="_blank" rel="noopener noreferrer" class="social-btn instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                        Suivre sur Instagram
-                    </a>
-                )}
-                {artist.email && (
-                     <a href={`mailto:${artist.email}`} class="social-btn email">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        Contacter
-                     </a>
-                )}
-            </div>
-        </div>
-      </div>
-    </section>
+        <section class="artist-hero">
+            <div class="container hero-inner">
+                <div class="image-col">
+                    <div class="image-wrapper">
+                        <img src={artist.image} alt={artist.name} />
+                    </div>
+                </div>
+                <div class="content-col">
+                    <h1>{artist.name}</h1>
+                    <p class="tagline">{artist.tagline}</p>
 
-    {artist.shows.length > 0 && (
-        <section class="shows-section">
-            <div class="container">
-                <h2>Prochaines Dates</h2>
-                <div class="shows-list">
-                    {artist.shows.map(show => (
-                        <div class="show-card">
-                            <div class="show-date">
-                                <span class="day">{new Date(show.date).toLocaleDateString('fr-FR', { day: 'numeric' })}</span>
-                                <span class="month">{new Date(show.date).toLocaleDateString('fr-FR', { month: 'short' })}</span>
-                            </div>
-                            <div class="show-details">
-                                <h3>{show.name}</h3>
-                                <p class="venue">{show.venue}</p>
-                            </div>
-                            <div class="show-action">
-                                {show.ticketLink && (
-                                    <a href={show.ticketLink} target="_blank" rel="noopener noreferrer" class="ticket-btn">
-                                        Réserver
-                                    </a>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                    <div class="bio">
+                        {
+                            artist.description
+                                .split("\n")
+                                .map((paragraph) => <p>{paragraph}</p>)
+                        }
+                    </div>
+
+                    <div class="socials">
+                        {
+                            artist.instagram && (
+                                <a
+                                    href={artist.instagram}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="social-btn instagram"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <>
+                                            <rect
+                                                x="2"
+                                                y="2"
+                                                width="20"
+                                                height="20"
+                                                rx="5"
+                                                ry="5"
+                                            />
+                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                            <line
+                                                x1="17.5"
+                                                y1="6.5"
+                                                x2="17.51"
+                                                y2="6.5"
+                                            />
+                                        </>
+                                    </svg>
+                                    Suivre sur Instagram
+                                </a>
+                            )
+                        }
+                        {
+                            artist.email && (
+                                <a
+                                    href={`mailto:${artist.email}`}
+                                    class="social-btn email"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <>
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                            <polyline points="22,6 12,13 2,6" />
+                                        </>
+                                    </svg>
+                                    Contacter
+                                </a>
+                            )
+                        }
+                    </div>
                 </div>
             </div>
         </section>
-    )}
-  </main>
+
+        {
+            artist.shows.length > 0 && (
+                <section class="shows-section">
+                    <div class="container">
+                        <h2>Prochaines Dates</h2>
+                        <div class="shows-list">
+                            {artist.shows.map((show) => (
+                                <div class="show-card">
+                                    <div class="show-date">
+                                        <span class="day">
+                                            {new Date(
+                                                show.date,
+                                            ).toLocaleDateString("fr-FR", {
+                                                day: "numeric",
+                                            })}
+                                        </span>
+                                        <span class="month">
+                                            {new Date(
+                                                show.date,
+                                            ).toLocaleDateString("fr-FR", {
+                                                month: "short",
+                                            })}
+                                        </span>
+                                    </div>
+                                    <div class="show-details">
+                                        <h3>{show.name}</h3>
+                                        <p class="venue">{show.venue}</p>
+                                    </div>
+                                    <div class="show-action">
+                                        {show.ticketLink && (
+                                            <a
+                                                href={show.ticketLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="ticket-btn"
+                                            >
+                                                Réserver
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )
+        }
+    </main>
 </Layout>
 
 <style>
     .artist-page {
         min-height: 100vh;
-        background: radial-gradient(circle at top right, rgba(255, 69, 0, 0.05), transparent 40%),
-                    radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.05), transparent 40%);
+        background: radial-gradient(
+                circle at top right,
+                rgba(255, 69, 0, 0.05),
+                transparent 40%
+            ),
+            radial-gradient(
+                circle at bottom left,
+                rgba(255, 215, 0, 0.05),
+                transparent 40%
+            );
         padding-bottom: 4rem;
     }
 
@@ -107,7 +191,7 @@ const { artist } = Astro.props;
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .back-link:hover {
         color: var(--color-accent);
     }
@@ -130,7 +214,7 @@ const { artist } = Astro.props;
         border-radius: 1rem;
         overflow: hidden;
         aspect-ratio: 3/4;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     .image-wrapper img {
@@ -142,7 +226,11 @@ const { artist } = Astro.props;
     .content-col h1 {
         font-size: 3.5rem;
         margin-bottom: 0.5rem;
-        background: linear-gradient(45deg, var(--color-text-main), var(--color-text-muted));
+        background: linear-gradient(
+            45deg,
+            var(--color-text-main),
+            var(--color-text-muted)
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -178,22 +266,22 @@ const { artist } = Astro.props;
         gap: 0.75rem;
         padding: 0.75rem 1.5rem;
         border-radius: 100px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
         font-weight: 600;
     }
 
     .social-btn:hover {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
     }
 
     .social-btn.instagram:hover {
-        border-color: #E1306C;
-        color: #E1306C;
+        border-color: #e1306c;
+        color: #e1306c;
     }
-    
+
     .social-btn.email:hover {
         border-color: var(--color-accent);
         color: var(--color-accent);
@@ -208,7 +296,7 @@ const { artist } = Astro.props;
         font-size: 2.5rem;
         margin-bottom: 2rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .shows-list {
@@ -226,12 +314,12 @@ const { artist } = Astro.props;
         border-radius: 1rem;
         align-items: center;
         transition: transform 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .show-card:hover {
         transform: translateX(10px);
-        border-color: rgba(255,255,255,0.1);
+        border-color: rgba(255, 255, 255, 0.1);
     }
 
     .show-date {
@@ -280,7 +368,7 @@ const { artist } = Astro.props;
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
     }
-    
+
     @media (max-width: 600px) {
         .show-card {
             grid-template-columns: 1fr;
@@ -288,7 +376,7 @@ const { artist } = Astro.props;
             gap: 1rem;
             text-align: center;
         }
-        
+
         .show-date {
             flex-direction: row;
             justify-content: center;
@@ -299,21 +387,21 @@ const { artist } = Astro.props;
             display: flex;
             justify-content: center;
         }
-        
+
         .content-col h1 {
             font-size: 2.5rem;
             text-align: center;
         }
-        
+
         .tagline {
             text-align: center;
             font-size: 1.25rem;
         }
-        
+
         .socials {
             justify-content: center;
         }
-        
+
         .bio {
             text-align: justify;
         }
