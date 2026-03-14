@@ -10,15 +10,6 @@
       <a href="#contact">Contact</a>
       <a href="#dates" class="nav-cta">Réserver</a>
     </nav>
-    <label class="burger" for="nav-toggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </label>
-    <input type="checkbox" id="nav-toggle" hidden />
-    <nav class="mobile-nav">
-      <a href="#dates" onclick="document.getElementById('nav-toggle').checked=false">Dates</a>
-      <a href="#bio" onclick="document.getElementById('nav-toggle').checked=false">À propos</a>
-      <a href="#contact" onclick="document.getElementById('nav-toggle').checked=false">Contact</a>
-    </nav>
   </div>
 </header>
 
@@ -97,45 +88,9 @@
     transform: translateY(-1px);
   }
 
-  .burger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 4px;
-  }
-
-  .burger span {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--color-text);
-    transition: transform 0.2s;
-  }
-
-  .mobile-nav {
-    display: none;
-    position: absolute;
-    top: 68px;
-    left: 0;
-    right: 0;
-    background: white;
-    border-bottom: 1px solid var(--color-border);
-    flex-direction: column;
-    padding: 1rem 1.5rem;
-    gap: 1rem;
-  }
-
-  #nav-toggle:checked ~ .mobile-nav {
-    display: flex;
-  }
-
   @media (max-width: 680px) {
-    nav { display: none; }
-    .burger { display: flex; }
-    header.scrolled .mobile-nav,
-    #nav-toggle:checked ~ .mobile-nav {
-      display: flex;
+    nav a:not(.nav-cta) {
+      display: none;
     }
   }
 </style>
