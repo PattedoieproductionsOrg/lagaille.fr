@@ -1,85 +1,122 @@
 ---
 ---
 
-<section class="contact">
-	<div class="container">
-		<div class="cta-grid">
-			<div class="cta-box organizers">
-				<h3>Pour les Organisateurs</h3>
-				<p>Vous souhaitez programmer l'un de nos artistes ou organiser un plateau ?</p>
-				<a href="mailto:pattedoie.productions@gmail.com" class="btn">Booker un spectacle</a>
-			</div>
-			
-			<div class="cta-box artists">
-				<h3>Pour les Artistes</h3>
-				<p>Vous pensez avoir le talent pour rejoindre l'écurie Pattedoie ?</p>
-				<a href="mailto:pattedoie.productions@gmail.com" class="btn btn-outline">Envoyer une démo</a>
-			</div>
-		</div>
-	</div>
+<section id="contact">
+  <div class="container">
+    <h2>Contact</h2>
+    <p class="subtitle">Pour toute demande de réservation, programmation ou information.</p>
+
+    <div class="contact-grid">
+      <a href="mailto:julien.gallego.pro@gmail.com" class="contact-item">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <div>
+          <p class="contact-label">Email</p>
+          <p class="contact-value">julien.gallego.pro@gmail.com</p>
+        </div>
+      </a>
+
+      <a href="https://www.instagram.com/la_gaille_/" target="_blank" rel="noopener" class="contact-item">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <p class="contact-label">Instagram</p>
+          <p class="contact-value">@la_gaille_</p>
+        </div>
+      </a>
+
+    </div>
+
+    <p class="production">Production &amp; diffusion : <strong>Pattedoie Productions</strong></p>
+  </div>
 </section>
 
 <style>
-	.contact {
-		padding: 6rem 0;
-		background: linear-gradient(to top, #000, #0f0f11);
-	}
-	
-	.cta-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 3rem;
-	}
-	
-	.cta-box {
-		padding: 3rem;
-		border-radius: 2rem;
-		background: rgba(255, 255, 255, 0.03);
-		text-align: center;
-		border: 1px solid rgba(255, 255, 255, 0.05);
-	}
-	
-	.cta-box:hover {
-		background: rgba(255, 255, 255, 0.05);
-	}
-	
-	h3 {
-		font-size: 2rem;
-		margin-bottom: 1rem;
-		color: white;
-	}
-	
-	p {
-		margin-bottom: 2rem;
-		font-size: 1.1rem;
-	}
-	
-	.btn {
-		display: inline-block;
-		padding: 1rem 2rem;
-		border-radius: 50px;
-		font-weight: 700;
-		transition: transform 0.2s, box-shadow 0.2s;
-	}
-	
-	.btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-	}
-	
-	.organizers .btn {
-		background: var(--color-accent);
-		color: #000;
-	}
-	
-	.artists .btn {
-		background: transparent;
-		color: white;
-		border: 2px solid white;
-	}
-	
-	.artists .btn:hover {
-		background: white;
-		color: black;
-	}
+  section {
+    padding: var(--section-padding);
+    background: var(--color-surface);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+  }
+
+  .subtitle {
+    color: var(--color-muted);
+    margin-bottom: 3rem;
+    max-width: 48ch;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  .contact-item:hover {
+    border-color: var(--color-text);
+    transform: translateY(-2px);
+  }
+
+  .icon {
+    color: var(--color-accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .contact-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-value {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .production {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .production strong {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 680px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

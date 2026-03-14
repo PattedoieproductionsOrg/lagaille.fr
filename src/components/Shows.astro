@@ -1,0 +1,315 @@
+---
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZxw2TESinTkb-5tZDLDmQdVPU9CNIEGcNMk0hCMHc1vOKwh5vyRPG-4u4gK2_8E1T0/pub?output=csv";
+---
+
+<section id="dates">
+  <div class="container">
+    <h2>Dates</h2>
+    <div id="shows-list" data-csv-url={CSV_URL}>
+      <p class="shows-loading">Chargement des dates…</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // CSV parser that handles quoted fields (fields may contain commas)
+  function parseCSV(text: string): string[][] {
+    const rows: string[][] = [];
+    const lines = text.trim().split('\n');
+    for (const line of lines) {
+      const fields: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          fields.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      fields.push(current.trim());
+      rows.push(fields);
+    }
+    return rows;
+  }
+
+  // Parse DD/MM/YYYY → Date (local noon to avoid UTC offset issues)
+  function parseFrDate(s: string): Date | null {
+    const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (!m) return null;
+    return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]), 12, 0, 0);
+  }
+
+  // Format a date in French short form: "8 fév."
+  function fmtShort(d: Date): string {
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  }
+
+  // Format year
+  function fmtYear(d: Date): string {
+    return d.getFullYear().toString();
+  }
+
+  // Format HH:MM → HHhMM (e.g. "18:00" → "18h00")
+  function fmtTime(t: string): string {
+    return t.replace(':', 'h');
+  }
+
+  // Format days string for display
+  function fmtDays(days: string): string {
+    const d = days.trim().toLowerCase();
+    if (d === 'dimanche') return 'Tous les dimanches';
+    if (d === 'samedi') return 'Tous les samedis';
+    if (d === 'vendredi') return 'Tous les vendredis';
+    if (d === 'mercredi') return 'Tous les mercredis';
+    if (d === 'jeudi') return 'Tous les jeudis';
+    // Multiple days
+    const parts = days.split(',').map(s => s.trim());
+    return parts.join(', ');
+  }
+
+  function renderError(container: HTMLElement) {
+    container.innerHTML = `
+      <p class="shows-empty">
+        Impossible de charger les dates. Consultez-nous directement :
+        <a href="mailto:julien.gallego.pro@gmail.com">julien.gallego.pro@gmail.com</a>
+      </p>`;
+  }
+
+  function renderEmpty(container: HTMLElement) {
+    container.innerHTML = `<p class="shows-empty">Aucune date à venir pour le moment.<br>Revenez bientôt !</p>`;
+  }
+
+  function renderShows(container: HTMLElement, rows: { start: Date; end: Date; days: string; time: string; eventType: string; eventName: string; venue: string; location: string; link: string }[]) {
+    const html = rows.map(r => {
+      const sameYear = r.start.getFullYear() === r.end.getFullYear();
+      const dateRange = sameYear
+        ? `${fmtShort(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`
+        : `${fmtShort(r.start)} ${fmtYear(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`;
+
+      const ticketBtn = r.link
+        ? `<a href="${r.link}" class="btn-ticket" target="_blank" rel="noopener">Réserver →</a>`
+        : '';
+
+      const typeLabel = r.eventType
+        ? `<span class="event-type">${r.eventType}</span>`
+        : '';
+
+      return `
+        <article class="show-card">
+          <div class="show-dates">
+            <span class="date-range">${dateRange}</span>
+            <span class="show-days">${fmtDays(r.days)}</span>
+          </div>
+          <div class="show-event">
+            ${typeLabel}
+            <p class="event-name">${r.eventName}</p>
+          </div>
+          <div class="show-info">
+            <p class="show-time">${fmtTime(r.time)}</p>
+            <p class="show-venue">${r.venue}</p>
+            <p class="show-location">${r.location}</p>
+          </div>
+          <div class="show-action">${ticketBtn}</div>
+        </article>`;
+    }).join('');
+    container.innerHTML = html;
+  }
+
+  async function loadShows() {
+    const container = document.getElementById('shows-list') as HTMLElement;
+    if (!container) return;
+
+    const csvUrl = container.dataset.csvUrl;
+    if (!csvUrl) return;
+
+    try {
+      const response = await fetch(csvUrl);
+      if (!response.ok) throw new Error('fetch failed');
+
+      const text = await response.text();
+      const rows = parseCSV(text);
+
+      if (rows.length < 2) { renderEmpty(container); return; }
+
+      // Row 0 is headers: display, start_date, end_date, days, time, event_type, event_name, location, venue, booking_link
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const shows = rows.slice(1)
+        .filter(r => r[0]?.toUpperCase() === 'TRUE')
+        .map(r => ({
+          start: parseFrDate(r[1]) ?? new Date(0),
+          end: parseFrDate(r[2]) ?? new Date(0),
+          days: r[3] ?? '',
+          time: r[4] ?? '',
+          eventType: r[5] ?? '',
+          eventName: r[6] ?? '',
+          venue: r[8] ?? '',
+          location: r[7] ?? '',
+          link: r[9] ?? '',
+        }))
+        .filter(r => r.end >= today)
+        .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+      if (shows.length === 0) { renderEmpty(container); return; }
+      renderShows(container, shows);
+    } catch {
+      renderError(container);
+    }
+  }
+
+  loadShows();
+</script>
+
+<style>
+  section {
+    padding: var(--section-padding);
+    background: var(--color-bg);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 2.5rem;
+    color: var(--color-text);
+  }
+
+  .shows-loading,
+  .shows-empty {
+    color: var(--color-muted);
+    font-size: 1rem;
+    padding: 1rem 0;
+  }
+
+  .shows-empty a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  :global(.show-card) {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  :global(.show-event) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  :global(.event-type) {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  :global(.event-name) {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--color-text);
+  }
+
+  :global(.show-card:first-child) {
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(.date-range) {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+  }
+
+  :global(.show-days) {
+    display: block;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  :global(.show-info) {
+    text-align: right;
+  }
+
+  :global(.show-time) {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  :global(.show-venue) {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    margin-top: 0.2rem;
+  }
+
+  :global(.show-location) {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+
+  :global(.btn-ticket) {
+    display: inline-block;
+    border: 1.5px solid var(--color-text);
+    color: var(--color-text);
+    padding: 0.6rem 1.4rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+  }
+
+  :global(.btn-ticket:hover) {
+    background: var(--color-text);
+    color: var(--color-bg);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 860px) {
+    :global(.show-card) {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    :global(.show-event) {
+      grid-column: 1 / -1;
+      order: -1;
+    }
+  }
+
+  @media (max-width: 520px) {
+    :global(.show-card) {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
+
+    :global(.show-info) {
+      text-align: left;
+    }
+  }
+</style>

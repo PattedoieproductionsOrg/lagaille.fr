@@ -2,47 +2,124 @@
 ---
 
 <section class="hero">
-	<div class="container">
-		<div class="hero-content">
-            <div class="logo-wrapper">
-                <img src={import.meta.env.BASE_URL + "pattedoie_logo_jaune.png"} alt="Pattedoie Productions" class="logo" />
-            </div>
-			<p class="mission">
-				Notre mission : propulser la nouvelle génération du stand-up français.
-				Nous dénichons, accompagnons et produisons les talents qui feront rire la France de demain.
-			</p>
-		</div>
-	</div>
+  <div class="hero-photo">
+    <img src="/photo_la_gaille_1.jpg" alt="La Gaille, humoriste stand-up" />
+    <div class="photo-title">
+      <span class="photo-title-text">La Gaille</span>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="container">
+      <p class="label">Stand-up · One-man-show</p>
+      <p class="subtitle"><em>Entre Rire et Réalité</em></p>
+      <p class="teaser">Un ingénieur qui a troqué son clavier pour un micro. L'histoire d'une reconversion, racontée avec autodérision et une lucidité désarmante.</p>
+      <a href="#dates" class="btn-primary">Voir les dates &darr;</a>
+    </div>
+  </div>
 </section>
 
 <style>
-	.hero {
-		padding: 6rem 0 4rem;
-		min-height: 60vh;
-		display: flex;
-		align-items: center;
-		background: radial-gradient(circle at top right, rgba(255, 69, 0, 0.1), transparent 40%);
-	}
-	
-    .logo-wrapper {
-        margin-bottom: 2rem;
-        max-width: 800px;
+  .hero {
+    display: flex;
+    flex-direction: column;
+    padding-top: 68px;
+  }
+
+  .hero-photo {
+    position: relative;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .hero-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .photo-title {
+    position: absolute;
+    top: 50%;
+    right: 6%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .photo-title-text {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 7.5rem);
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    text-shadow:
+      0 2px 30px rgba(0,0,0,0.4),
+      0 0 80px rgba(0,0,0,0.2);
+    display: block;
+    white-space: nowrap;
+  }
+
+  .hero-content {
+    background: var(--color-bg);
+    padding: 3rem 1.5rem 4.5rem;
+    border-top: 3px solid var(--color-accent);
+  }
+
+  .hero-content .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    color: var(--color-text);
+    margin-bottom: 1.2rem;
+  }
+
+  .teaser {
+    font-size: 1rem;
+    color: var(--color-muted);
+    max-width: 55ch;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--color-cta-bg);
+    color: var(--color-cta-text);
+    padding: 0.85rem 2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn-primary:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  @media (max-width: 600px) {
+    .photo-title-text {
+      font-size: clamp(2rem, 10vw, 3.5rem);
     }
-    
-    .logo {
-        width: 100%;
-        height: auto;
+
+    .hero-content {
+      padding: 2rem 1.5rem 3rem;
     }
-	
-	.text-gradient {
-		background: linear-gradient(45deg, var(--color-accent), var(--color-accent-2));
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-	
-	.mission {
-		font-size: 1.25rem;
-		max-width: 600px;
-		font-weight: 300;
-	}
+  }
 </style>

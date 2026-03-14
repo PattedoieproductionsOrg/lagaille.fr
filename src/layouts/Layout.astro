@@ -1,73 +1,126 @@
 ---
 interface Props {
-	title: string;
+  title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = "La Gaille, humoriste stand-up lyonnais. One-man-show « Entre Rire et Réalité »." } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="fr">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Pattedoie Productions - La nouvelle vague du stand-up français." />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href={import.meta.env.BASE_URL + "favicon.png"} />
-		<link rel="apple-touch-icon" href={import.meta.env.BASE_URL + "apple-touch-icon.png"} />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/photo_la_gaille_1.jpg" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <footer>
+      <div class="container">
+        <p>© {new Date().getFullYear()} La Gaille &mdash; Production <a href="mailto:julien.gallego.pro@gmail.com">Pattedoie Productions</a></p>
+        <a href="https://www.instagram.com/la_gaille_/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </a>
+      </div>
+    </footer>
+  </body>
 </html>
-<style is:global>
-	:root {
-		--color-bg: #0f0f11;
-		--color-text-main: #f0f0f5;
-		--color-text-muted: #a0a0b0;
-		--color-accent: #FFD700; /* Gold */
-		--color-accent-2: #FF4500; /* OrangeRed */
-		--color-card-bg: #1a1a1f;
 
-		--font-main: 'Outfit', sans-serif;
-	}
-	html {
-		font-family: var(--font-main);
-		background: var(--color-bg);
-		color: var(--color-text-main);
-		scroll-behavior: smooth;
-	}
-	body {
-		margin: 0;
-		padding: 0;
-		min-height: 100vh;
-	}
-	h1, h2, h3, h4 {
-		margin: 0;
-		line-height: 1.1;
-		font-weight: 800;
-	}
-	p {
-		line-height: 1.6;
-		color: var(--color-text-muted);
-	}
-	a {
-		color: inherit;
-		text-decoration: none;
-	}
-	img {
-		max-width: 100%;
-		display: block;
-	}
-	
-	/* Utilities */
-	.container {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 0 1.5rem;
-	}
+<style is:global>
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #f7f6f4;
+    --color-text: #111111;
+    --color-muted: #666666;
+    --color-accent: #c9a84c;
+    --color-border: #e8e8e8;
+    --color-cta-bg: #111111;
+    --color-cta-text: #ffffff;
+    --max-width: 1100px;
+    --section-padding: 5rem 1.5rem;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  section[id] {
+    scroll-margin-top: 70px;
+  }
+
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  footer {
+    background: var(--color-text);
+    color: #aaa;
+    padding: 2rem 1.5rem;
+    font-size: 0.85rem;
+  }
+
+  footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  footer a {
+    color: #aaa;
+    transition: color 0.2s;
+  }
+
+  footer a:hover {
+    color: var(--color-accent);
+  }
 </style>

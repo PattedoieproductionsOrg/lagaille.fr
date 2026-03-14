@@ -1,0 +1,123 @@
+---
+---
+
+<section id="bio">
+  <div class="container">
+    <div class="bio-grid">
+      <div class="bio-text">
+        <h2>À propos</h2>
+        <p>
+          Natif du Sud de la France, La Gaille a grandi entre les cigales et les rêves de scène,
+          avant de faire un détour inattendu par l'informatique. Ingénieur de métier pendant
+          des années, il a finalement répondu à l'appel du micro pour se lancer dans le stand-up.
+        </p>
+        <p>
+          Son univers ? L'autodérision, l'observation du quotidien, et les grandes questions
+          existentielles du type : « Pourquoi j'ai quitté un CDI stable ? » Installé dans la
+          région lyonnaise, il forge son style sur les scènes ouvertes et plateaux d'humour
+          de Lyon et Montpellier.
+        </p>
+        <p>
+          Dans son spectacle <em>Entre Rire et Réalité</em>, il explore les grands virages de
+          sa vie — reconversion professionnelle, déracinement géographique, questionnements
+          existentiels — avec une finesse et une sincérité qui créent une véritable proximité
+          avec le public.
+        </p>
+        <ul class="awards">
+          <li>🏆 Prix du public Kandidator 2024</li>
+          <li>🎭 Sommets du rire 2025 — Arêches-Beaufort</li>
+          <li>🎪 Trampolino 2024 — Écully</li>
+          <li>🎤 Ma région a de l'humour — édition 2025</li>
+        </ul>
+      </div>
+      <div class="bio-poster">
+        <img src="/affiche.jpg" alt="Affiche du spectacle Entre Rire et Réalité" />
+        <p class="show-info">
+          <strong>Entre Rire et Réalité</strong><br />
+          One-man-show · 60 min · Tout public
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    background: var(--color-surface);
+    padding: var(--section-padding);
+  }
+
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+  }
+
+  .bio-text p {
+    color: var(--color-muted);
+    margin-bottom: 1.2rem;
+    max-width: 58ch;
+  }
+
+  .bio-text em {
+    font-style: italic;
+    color: var(--color-text);
+  }
+
+  .awards {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .awards li {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .bio-poster {
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .bio-poster img {
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+
+  .show-info {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 800px) {
+    .bio-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .bio-poster {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .bio-text p {
+      max-width: 100%;
+    }
+  }
+</style>
