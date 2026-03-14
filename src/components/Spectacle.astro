@@ -1,0 +1,90 @@
+---
+---
+
+<section id="spectacle">
+  <div class="container">
+    <div class="spectacle-grid">
+      <div class="spectacle-poster">
+        <img src="/affiche.jpg" alt="Affiche du spectacle Entre Rire et Réalité" />
+      </div>
+      <div class="spectacle-info">
+        <h2>Le spectacle</h2>
+        <p class="spectacle-title">Entre Rire et Réalité</p>
+        <p class="spectacle-meta">One-man-show · 60 min · Tout public</p>
+        <p class="spectacle-desc">
+          Un seul-en-scène où La Gaille explore les grands virages de sa vie — reconversion
+          professionnelle, déracinement géographique, questionnements existentiels — avec une
+          finesse et une sincérité qui créent une véritable proximité avec le public.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    padding: var(--section-padding);
+    background: var(--color-surface);
+  }
+
+  .spectacle-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .spectacle-poster {
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .spectacle-poster img {
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+  }
+
+  .spectacle-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--color-text);
+    margin-bottom: 0.4rem;
+  }
+
+  .spectacle-meta {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .spectacle-desc {
+    color: var(--color-muted);
+    max-width: 52ch;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 800px) {
+    .spectacle-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .spectacle-poster {
+      width: 100%;
+      max-width: 220px;
+    }
+
+    .spectacle-desc {
+      max-width: 100%;
+    }
+  }
+</style>

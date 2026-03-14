@@ -17,25 +17,6 @@
           région lyonnaise, il forge son style sur les scènes ouvertes et plateaux d'humour
           de Lyon et Montpellier.
         </p>
-        <p>
-          Dans son spectacle <em>Entre Rire et Réalité</em>, il explore les grands virages de
-          sa vie — reconversion professionnelle, déracinement géographique, questionnements
-          existentiels — avec une finesse et une sincérité qui créent une véritable proximité
-          avec le public.
-        </p>
-        <ul class="awards">
-          <li>🏆 Prix du public Kandidator 2024</li>
-          <li>🎭 Sommets du rire 2025 — Arêches-Beaufort</li>
-          <li>🎪 Trampolino 2024 — Écully</li>
-          <li>🎤 Ma région a de l'humour — édition 2025</li>
-        </ul>
-      </div>
-      <div class="bio-poster">
-        <img src="/affiche.jpg" alt="Affiche du spectacle Entre Rire et Réalité" />
-        <p class="show-info">
-          <strong>Entre Rire et Réalité</strong><br />
-          One-man-show · 60 min · Tout public
-        </p>
       </div>
     </div>
   </div>
@@ -49,9 +30,7 @@
 
   .bio-grid {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 5rem;
-    align-items: start;
+    grid-template-columns: 1fr;
   }
 
   h2 {
@@ -72,50 +51,7 @@
     color: var(--color-text);
   }
 
-  .awards {
-    list-style: none;
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .awards li {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text);
-  }
-
-  .bio-poster {
-    width: 280px;
-    flex-shrink: 0;
-  }
-
-  .bio-poster img {
-    width: 100%;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-  }
-
-  .show-info {
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    color: var(--color-muted);
-    text-align: center;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 800px) {
-    .bio-grid {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-    }
-
-    .bio-poster {
-      width: 100%;
-      max-width: 280px;
-      margin: 0 auto;
-    }
-
+@media (max-width: 800px) {
     .bio-text p {
       max-width: 100%;
     }

@@ -294,22 +294,27 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
     :global(.show-card) {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto auto;
+      gap: 1rem;
     }
 
     :global(.show-event) {
       grid-column: 1 / -1;
       order: -1;
     }
+
+    :global(.show-info) {
+      text-align: left;
+    }
   }
 
   @media (max-width: 520px) {
     :global(.show-card) {
       grid-template-columns: 1fr;
-      gap: 0.8rem;
+      gap: 0.6rem;
     }
 
-    :global(.show-info) {
-      text-align: left;
+    :global(.show-action) {
+      padding-top: 0.25rem;
     }
   }
 </style>

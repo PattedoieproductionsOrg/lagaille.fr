@@ -1,0 +1,143 @@
+---
+---
+
+<section id="parcours">
+  <div class="container">
+    <h2>Parcours</h2>
+    <div class="timeline">
+
+      <div class="timeline-group">
+        <p class="timeline-category">Scènes ouvertes</p>
+        <ul>
+          <li>
+            <span class="item-label">Plateaux d'humour lyonnais et montpelliérains</span>
+            <span class="item-year">depuis 2022</span>
+          </li>        </ul>
+      </div>
+
+      <div class="timeline-group">
+        <p class="timeline-category">Programmation en salle</p>
+        <ul>
+          <li>
+            <span class="item-label">Café-Théâtre Le Boui Boui — Lyon</span>
+            <span class="item-year">2025 – 2026</span>
+          </li>
+          <li>
+            <span class="item-label">Espace Gerson — Lyon</span>
+            <span class="item-year">2026</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="timeline-group">
+        <p class="timeline-category">Festivals & événements</p>
+        <ul>
+          <li>
+            <span class="item-label">Prix du public Kandidator</span>
+            <span class="item-year">2024</span>
+          </li>
+          <li>
+            <span class="item-label">Trampolino — Écully</span>
+            <span class="item-year">2024</span>
+          </li>
+          <li>
+            <span class="item-label">Sommets du rire — Arêches-Beaufort</span>
+            <span class="item-year">2025</span>
+          </li>
+          <li>
+            <span class="item-label">Ma région a de l'humour</span>
+            <span class="item-year">2025</span>
+          </li>
+          <li>
+            <span class="item-label">Fest'off — Festival d'humour de Tournon-sur-Rhône</span>
+            <span class="item-year">2025</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    padding: var(--section-padding);
+    background: var(--color-bg);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 2rem;
+    color: var(--color-text);
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
+  }
+
+  .timeline-group {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0 2rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--color-border);
+    align-items: start;
+  }
+
+  .timeline-category {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-top: 0.15rem;
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .item-label {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .item-detail {
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  .item-year {
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 600px) {
+    .timeline-group {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    .item-label {
+      font-size: 0.88rem;
+    }
+  }
+</style>
