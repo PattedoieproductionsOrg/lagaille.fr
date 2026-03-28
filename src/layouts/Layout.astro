@@ -83,6 +83,10 @@ const jsonLd = {
       gtag('js', new Date());
       gtag('config', 'G-YB40WS0EY9');
     </script>
+    <!-- Wispra Pixel V2 -->
+    <script>
+      (function(d,t){var id='__wispra_v2_'+t;if(d.getElementById(id))return;var s=d.createElement('script');s.id=id;s.src='https://api.wispra.fr/tag/'+t+'/v2/script.js';s.async=true;s.onerror=function(){setTimeout(function(){var r=d.createElement('script');r.src=s.src;r.async=true;(d.head||d.body).appendChild(r)},2000)};(d.head||d.getElementsByTagName('head')[0]).appendChild(s)})(document,'YOUR_WISPRA_ID');
+    </script>
   </head>
   <body>
     <slot />
