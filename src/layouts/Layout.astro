@@ -85,21 +85,25 @@ const jsonLd = {
     </script>
     <!-- Wispra Pixel V2 -->
     <script>
-      (function(d,t){var id='__wispra_v2_'+t;if(d.getElementById(id))return;var s=d.createElement('script');s.id=id;s.src='https://api.wispra.fr/tag/'+t+'/v2/script.js';s.async=true;s.onerror=function(){setTimeout(function(){var r=d.createElement('script');r.src=s.src;r.async=true;(d.head||d.body).appendChild(r)},2000)};(d.head||d.getElementsByTagName('head')[0]).appendChild(s)})(document,'YOUR_WISPRA_ID');
+      (function(d,t){var id='__wispra_v2_'+t;if(d.getElementById(id))return;var s=d.createElement('script');s.id=id;s.src='https://api.wispra.fr/tag/'+t+'/v2/script.js';s.async=true;s.onerror=function(){setTimeout(function(){var r=d.createElement('script');r.src=s.src;r.async=true;(d.head||d.body).appendChild(r)},2000)};(d.head||d.getElementsByTagName('head')[0]||d.body||d.documentElement).appendChild(s);})(document,'492746cd-fcb1-45fa-9ee8-ec26c6a5eb7e');
     </script>
+    <!-- Fin Wispra Pixel V2 -->
   </head>
   <body>
     <slot />
     <footer>
       <div class="container">
         <p>© {new Date().getFullYear()} La Gaille &mdash; Production <a href="mailto:julien.gallego.pro@gmail.com">Pattedoie Productions</a></p>
-        <a href="https://www.instagram.com/la_gaille_/" target="_blank" rel="noopener" aria-label="Instagram">
+        <nav class="footer-links">
+          <a href="/blog">Blog</a>
+          <a href="https://www.instagram.com/la_gaille_/" target="_blank" rel="noopener" aria-label="Instagram">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
             <circle cx="12" cy="12" r="4"/>
             <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
           </svg>
         </a>
+        </nav>
       </div>
     </footer>
   </body>
@@ -186,6 +190,12 @@ const jsonLd = {
 
   footer a:hover {
     color: var(--color-accent);
+  }
+
+  footer .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   @media (max-width: 600px) {
