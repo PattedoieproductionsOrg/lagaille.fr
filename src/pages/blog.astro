@@ -1,0 +1,268 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import { getArticles, formatDate, calculateReadingTime } from '../utils/blog-api';
+
+let articles: any[] = [];
+let error: string | null = null;
+
+try {
+  const response = await getArticles();
+  articles = response.articles;
+} catch (e: any) {
+  error = e.message;
+  console.error("Erreur:", e);
+}
+---
+
+<Layout title="Blog – La Gaille" description="Découvrez les articles de La Gaille — anecdotes, coulisses et réflexions d'un humoriste stand-up lyonnais.">
+  <Header />
+  <main>
+    <section class="blog-section">
+      <div class="container">
+        <h1>Blog</h1>
+        <p class="blog-subtitle">Anecdotes, coulisses & réflexions</p>
+
+        {error && (
+          <div class="blog-error">
+            <p>Impossible de charger les articles pour le moment.</p>
+          </div>
+        )}
+
+        {articles.length === 0 && !error && (
+          <p class="blog-empty">Les articles arrivent bientôt… Restez connectés !</p>
+        )}
+
+        <div class="blog-grid">
+          {articles.map((article, index) => (
+            <article class={`blog-card ${index === 0 ? 'blog-card--featured' : ''}`}>
+              <a href={`/blog/${article.slug}`}>
+                <div class="blog-card-accent"></div>
+                <div class="blog-card-body">
+                  <div class="blog-card-top">
+                    {article.blogCategorie && (
+                      <span class="blog-card-category">{article.blogCategorie.label}</span>
+                    )}
+                    <span class="blog-card-reading">
+                      {calculateReadingTime(article.contentPublic || article.description)} min
+                    </span>
+                  </div>
+                  <h2>{article.title}</h2>
+                  <p>{article.description}</p>
+                  <div class="blog-card-footer">
+                    <time datetime={article.publishedDate}>
+                      {formatDate(article.publishedDate)}
+                    </time>
+                    <span class="blog-card-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .blog-section {
+    padding: 8rem 1.5rem 5rem;
+  }
+
+  .blog-section h1 {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .blog-subtitle {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+    font-style: italic;
+    font-family: var(--font-display);
+  }
+
+  .blog-error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .blog-empty {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    padding: 4rem 0;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .blog-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .blog-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .blog-card-accent {
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), #e8c84a);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .blog-card:hover .blog-card-accent {
+    opacity: 1;
+  }
+
+  .blog-card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .blog-card-body {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 4px);
+  }
+
+  .blog-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .blog-card-category {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-bg);
+    background: var(--color-accent);
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+  }
+
+  .blog-card-reading {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    background: var(--color-surface);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+  }
+
+  .blog-card h2 {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.25;
+    transition: color 0.2s;
+  }
+
+  .blog-card:hover h2 {
+    color: var(--color-accent);
+  }
+
+  .blog-card p {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .blog-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .blog-card-footer time {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .blog-card-arrow {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .blog-card:hover .blog-card-arrow {
+    transform: translateX(4px);
+    color: var(--color-accent);
+  }
+
+  /* Featured card (first article) */
+  .blog-card--featured {
+    grid-column: 1 / -1;
+  }
+
+  .blog-card--featured .blog-card-body {
+    padding: 2.25rem;
+  }
+
+  .blog-card--featured h2 {
+    font-size: 2rem;
+  }
+
+  .blog-card--featured p {
+    font-size: 1rem;
+    -webkit-line-clamp: 4;
+  }
+
+  @media (max-width: 600px) {
+    .blog-section {
+      padding: 6rem 1.25rem 3rem;
+    }
+
+    .blog-section h1 {
+      font-size: 2.4rem;
+    }
+
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .blog-card--featured h2 {
+      font-size: 1.55rem;
+    }
+
+    .blog-card--featured .blog-card-body {
+      padding: 1.75rem;
+    }
+  }
+</style>

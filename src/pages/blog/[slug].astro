@@ -1,0 +1,210 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import { getArticle, getArticles, formatDate, calculateReadingTime } from '../../utils/blog-api';
+import { marked } from 'marked';
+import type { WithContext, Thing } from 'schema-dts';
+
+marked.setOptions({ breaks: true, gfm: true });
+
+export async function getStaticPaths() {
+  try {
+    const response = await getArticles();
+    return response.articles.map((article) => ({
+      params: { slug: article.slug },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/blog");
+
+let article: any = null;
+let htmlContent = "";
+
+try {
+  article = await getArticle(slug);
+  let content = article.contentPublic || article.content || "";
+
+  // Retirer le titre H1 du début s'il duplique le titre
+  const h1Regex = /^#\s+(.+?)(\r?\n|$)/;
+  const match = content.match(h1Regex);
+  if (match && match[1].trim() === article.title.trim()) {
+    content = content.replace(h1Regex, "").trim();
+  }
+
+  htmlContent = await marked.parse(content);
+} catch {
+  return Astro.redirect("/blog");
+}
+
+const readingTime = calculateReadingTime(article.contentPublic || "");
+
+const schema: WithContext<Thing> = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": Astro.url.href,
+  url: Astro.url.href,
+  headline: article.title,
+  description: article.description,
+  keywords: article.keywords,
+  datePublished: article.publishedDate,
+  dateModified: article.updatedAt,
+  inLanguage: "fr-FR",
+};
+---
+
+<Layout title={`${article.title} – La Gaille`} description={article.description}>
+  <Header />
+  <main>
+    <article class="article-page">
+      <div class="container">
+        <a href="/blog" class="back-link">&larr; Retour au blog</a>
+        <header class="article-header">
+          {article.blogCategorie && (
+            <span class="article-category">{article.blogCategorie.label}</span>
+          )}
+          <h1>{article.title}</h1>
+          <div class="article-meta">
+            <time datetime={article.publishedDate}>
+              {formatDate(article.publishedDate)}
+            </time>
+            <span>&bull; {readingTime} min de lecture</span>
+          </div>
+        </header>
+        <div class="article-content" set:html={htmlContent} />
+      </div>
+    </article>
+  </main>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} slot="head" />
+</Layout>
+
+<style>
+  .article-page {
+    padding: 8rem 1.5rem 5rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .article-header {
+    margin-bottom: 3rem;
+  }
+
+  .article-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-header h1 {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  .article-content {
+    max-width: 720px;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .article-content :global(h2) {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .article-content :global(h3) {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-content :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .article-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .article-content :global(code) {
+    background: var(--color-surface);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .article-content :global(pre) {
+    background: var(--color-surface);
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  .article-content :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .article-content :global(img) {
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+
+  .article-content :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .article-page {
+      padding: 6rem 1.25rem 3rem;
+    }
+
+    .article-header h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

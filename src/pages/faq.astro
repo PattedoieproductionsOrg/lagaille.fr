@@ -1,0 +1,285 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import { getFaq } from '../utils/faq-api';
+import { marked } from 'marked';
+import type { WithContext, FAQPage } from 'schema-dts';
+
+marked.setOptions({ breaks: true, gfm: true });
+
+let faqData: any = null;
+let error: string | null = null;
+
+try {
+  faqData = await getFaq();
+} catch (e: any) {
+  error = e.message;
+  console.error("Erreur:", e);
+}
+
+// Schema.org FAQPage
+const schemaQuestions: any[] = [];
+if (faqData) {
+  for (const category of faqData.categories) {
+    for (const q of category.questions) {
+      schemaQuestions.push({
+        "@type": "Question",
+        name: q.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: q.responsePublic || q.response,
+        },
+      });
+    }
+  }
+  for (const q of faqData.uncategorizedQuestions) {
+    schemaQuestions.push({
+      "@type": "Question",
+      name: q.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: q.responsePublic || q.response,
+      },
+    });
+  }
+}
+
+const schema: WithContext<FAQPage> = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: schemaQuestions,
+};
+---
+
+<Layout title="FAQ – La Gaille" description="Trouvez les réponses à vos questions sur La Gaille, ses spectacles et ses représentations.">
+  <Header />
+  <main>
+    <section class="faq-section">
+      <div class="container">
+        <h1>Questions fréquentes</h1>
+        <p class="faq-subtitle">Tout ce que vous voulez savoir</p>
+
+        {error && (
+          <div class="faq-error">
+            <p>Impossible de charger la FAQ pour le moment.</p>
+          </div>
+        )}
+
+        {faqData && faqData.categories.length === 0 && faqData.uncategorizedQuestions.length === 0 && (
+          <p class="faq-empty">La FAQ arrive bientôt… Restez connectés !</p>
+        )}
+
+        {faqData && (
+          <div class="faq-content">
+            {faqData.categories
+              .sort((a: any, b: any) => a.rank - b.rank)
+              .map((category: any) => (
+                <div class="faq-category">
+                  <h2>{category.label}</h2>
+                  <div class="faq-list">
+                    {category.questions
+                      .sort((a: any, b: any) => a.rank - b.rank)
+                      .map((q: any) => (
+                        <details class="faq-item">
+                          <summary>
+                            <span class="faq-question">{q.question}</span>
+                            <span class="faq-icon">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                              </svg>
+                            </span>
+                          </summary>
+                          <div class="faq-answer" set:html={marked.parse(q.responsePublic || q.response)} />
+                        </details>
+                      ))}
+                  </div>
+                </div>
+              ))}
+
+            {faqData.uncategorizedQuestions.length > 0 && (
+              <div class="faq-category">
+                <h2>Autres questions</h2>
+                <div class="faq-list">
+                  {faqData.uncategorizedQuestions
+                    .sort((a: any, b: any) => a.rank - b.rank)
+                    .map((q: any) => (
+                      <details class="faq-item">
+                        <summary>
+                          <span class="faq-question">{q.question}</span>
+                          <span class="faq-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </span>
+                        </summary>
+                        <div class="faq-answer" set:html={marked.parse(q.responsePublic || q.response)} />
+                      </details>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} slot="head" />
+</Layout>
+
+<style>
+  .faq-section {
+    padding: 8rem 1.5rem 5rem;
+  }
+
+  .faq-section h1 {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .faq-subtitle {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+    font-style: italic;
+    font-family: var(--font-display);
+  }
+
+  .faq-error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .faq-empty {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    padding: 4rem 0;
+  }
+
+  .faq-content {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .faq-category {
+    margin-bottom: 2.5rem;
+  }
+
+  .faq-category h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-accent);
+    display: inline-block;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .faq-item {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+    background: var(--color-bg);
+  }
+
+  .faq-item[open] {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    list-style: none;
+    gap: 1rem;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::marker {
+    display: none;
+    content: "";
+  }
+
+  .faq-question {
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .faq-icon {
+    flex-shrink: 0;
+    color: var(--color-muted);
+    transition: transform 0.3s ease;
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-item[open] .faq-question {
+    color: var(--color-accent);
+  }
+
+  .faq-answer {
+    padding: 0 1.5rem 1.25rem;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .faq-answer :global(p) {
+    margin-bottom: 0.75rem;
+  }
+
+  .faq-answer :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .faq-answer :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .faq-answer :global(ul),
+  .faq-answer :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 600px) {
+    .faq-section {
+      padding: 6rem 1.25rem 3rem;
+    }
+
+    .faq-section h1 {
+      font-size: 2.4rem;
+    }
+
+    .faq-item summary {
+      padding: 1rem 1.25rem;
+    }
+
+    .faq-answer {
+      padding: 0 1.25rem 1rem;
+    }
+  }
+</style>
