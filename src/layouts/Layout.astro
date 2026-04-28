@@ -4,46 +4,51 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "La Gaille, humoriste stand-up lyonnais. One-man-show « Entre Rire et Réalité »." } = Astro.props;
+const {
+  title,
+  description = "La Gaille, humoriste stand-up lyonnais. One-man-show « Entre Rire et Réalité ».",
+} = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL('/photo_la_gaille_1.jpg', Astro.site);
+const ogImageURL = new URL("/photo_la_gaille_1.jpg", Astro.site);
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Person",
-      "name": "La Gaille",
-      "url": "https://lagaille.fr",
-      "image": ogImageURL.href,
-      "description": "Humoriste stand-up lyonnais, auteur du one-man-show « Entre Rire et Réalité ».",
-      "jobTitle": "Humoriste",
-      "address": {
+      name: "La Gaille",
+      url: "https://lagaille.fr",
+      image: ogImageURL.href,
+      description:
+        "Humoriste stand-up lyonnais, auteur du one-man-show « Entre Rire et Réalité ».",
+      jobTitle: "Humoriste",
+      address: {
         "@type": "PostalAddress",
-        "addressLocality": "Lyon",
-        "addressCountry": "FR"
+        addressLocality: "Lyon",
+        addressCountry: "FR",
       },
-      "sameAs": ["https://www.instagram.com/la_gaille_/"]
+      sameAs: ["https://www.instagram.com/la_gaille_/"],
     },
     {
       "@type": "TheaterEvent",
-      "name": "Entre Rire et Réalité",
-      "description": "One-man-show de La Gaille — 60 minutes, tout public. Un spectacle mêlant autodérision, observation du quotidien et réflexion sur les choix de vie.",
-      "performer": {
+      name: "Entre Rire et Réalité",
+      description:
+        "One-man-show de La Gaille — 60 minutes, tout public. Un spectacle mêlant autodérision, observation du quotidien et réflexion sur les choix de vie.",
+      performer: {
         "@type": "Person",
-        "name": "La Gaille"
+        name: "La Gaille",
       },
-      "organizer": {
+      organizer: {
         "@type": "Organization",
-        "name": "Pattedoie Productions",
-        "email": "julien.gallego.pro@gmail.com"
+        name: "Pattedoie Productions",
+        email: "julien.gallego.pro@gmail.com",
       },
-      "url": "https://lagaille.fr",
-      "image": ogImageURL.href,
-      "inLanguage": "fr"
-    }
-  ]
+      url: "https://lagaille.fr",
+      image: ogImageURL.href,
+      inLanguage: "fr",
+    },
+  ],
 };
 ---
 
@@ -71,39 +76,85 @@ const jsonLd = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <title>{title}</title>
     <!-- Données structurées JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YB40WS0EY9"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YB40WS0EY9"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-YB40WS0EY9');
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-YB40WS0EY9");
     </script>
     <!-- Wispra Pixel V2 -->
     <script>
-      (function(d,t){var id='__wispra_v2_'+t;if(d.getElementById(id))return;var s=d.createElement('script');s.id=id;s.src='https://api.wispra.fr/tag/'+t+'/v2/script.js';s.async=true;s.onerror=function(){setTimeout(function(){var r=d.createElement('script');r.src=s.src;r.async=true;(d.head||d.body).appendChild(r)},2000)};(d.head||d.getElementsByTagName('head')[0]||d.body||d.documentElement).appendChild(s);})(document,'492746cd-fcb1-45fa-9ee8-ec26c6a5eb7e');
+      (function (d, t) {
+        var id = "__wispra_v2_" + t;
+        if (d.getElementById(id)) return;
+        var s = d.createElement("script");
+        s.id = id;
+        s.src = "https://api.wispra.fr/tag/" + t + "/v2/script.js";
+        s.async = true;
+        s.onerror = function () {
+          setTimeout(function () {
+            var r = d.createElement("script");
+            r.src = s.src;
+            r.async = true;
+            (d.head || d.body).appendChild(r);
+          }, 2000);
+        };
+        (
+          d.head ||
+          d.getElementsByTagName("head")[0] ||
+          d.body ||
+          d.documentElement
+        ).appendChild(s);
+      })(document, "492746cd-fcb1-45fa-9ee8-ec26c6a5eb7e");
     </script>
     <!-- Fin Wispra Pixel V2 -->
+
+    <!-- Redploy -->
   </head>
   <body>
     <slot />
     <footer>
       <div class="container">
-        <p>© {new Date().getFullYear()} La Gaille &mdash; Production <a href="mailto:julien.gallego.pro@gmail.com">Pattedoie Productions</a></p>
+        <p>
+          © {new Date().getFullYear()} La Gaille &mdash; Production <a
+            href="mailto:julien.gallego.pro@gmail.com">Pattedoie Productions</a>
+        </p>
         <nav class="footer-links">
           <a href="/blog">Blog</a>
           <a href="/faq">FAQ</a>
-          <a href="https://www.instagram.com/la_gaille_/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-            <circle cx="12" cy="12" r="4"/>
-            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
-          </svg>
-        </a>
+          <a
+            href="https://www.instagram.com/la_gaille_/"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"></circle>
+            </svg>
+          </a>
         </nav>
       </div>
     </footer>
@@ -122,11 +173,13 @@ const jsonLd = {
     --color-cta-text: #ffffff;
     --max-width: 1100px;
     --section-padding: 5rem 1.5rem;
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'Inter', system-ui, sans-serif;
+    --font-display: "Cormorant Garamond", Georgia, serif;
+    --font-body: "Inter", system-ui, sans-serif;
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -154,7 +207,9 @@ const jsonLd = {
     padding: 0 1.5rem;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
     font-weight: 600;
     line-height: 1.1;
