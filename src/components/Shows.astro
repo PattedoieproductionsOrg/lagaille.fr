@@ -59,6 +59,16 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
     return d.getFullYear().toString();
   }
 
+  // Format a single date with its weekday: "Mercredi 8 fév."
+  function fmtSingle(d: Date): string {
+    const s = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function isSameDay(a: Date, b: Date): boolean {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+
   // Format HH:MM → HHhMM (e.g. "18:00" → "18h00")
   function fmtTime(t: string): string {
     return t.replace(':', 'h');
@@ -89,16 +99,24 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
     container.innerHTML = `<p class="shows-empty">Aucune date à venir pour le moment.<br>Revenez bientôt !</p>`;
   }
 
-  function renderShows(container: HTMLElement, rows: { start: Date; end: Date; days: string; time: string; eventType: string; eventName: string; venue: string; location: string; link: string }[]) {
+  function renderShows(container: HTMLElement, rows: { start: Date; end: Date; days: string; time: string; eventType: string; eventName: string; venue: string; location: string; link: string; infoLink: string }[]) {
     const html = rows.map(r => {
+      const singleDay = isSameDay(r.start, r.end);
       const sameYear = r.start.getFullYear() === r.end.getFullYear();
-      const dateRange = sameYear
-        ? `${fmtShort(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`
-        : `${fmtShort(r.start)} ${fmtYear(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`;
+      const dateRange = singleDay
+        ? `${fmtSingle(r.start)} ${fmtYear(r.start)}`
+        : sameYear
+          ? `${fmtShort(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`
+          : `${fmtShort(r.start)} ${fmtYear(r.start)} – ${fmtShort(r.end)} ${fmtYear(r.end)}`;
 
-      const ticketBtn = r.link
+      const daysLabel = singleDay ? '' : `<span class="show-days">${fmtDays(r.days)}</span>`;
+
+      // Priority: booking link → info link → greyed placeholder
+      const actionBtn = r.link
         ? `<a href="${r.link}" class="btn-ticket" target="_blank" rel="noopener">Réserver →</a>`
-        : '';
+        : r.infoLink
+          ? `<a href="${r.infoLink}" class="btn-ticket btn-info" target="_blank" rel="noopener">Plus d'infos →</a>`
+          : `<span class="btn-ticket btn-soon">Infos à venir</span>`;
 
       const typeLabel = r.eventType
         ? `<span class="event-type">${r.eventType}</span>`
@@ -108,7 +126,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
         <article class="show-card">
           <div class="show-dates">
             <span class="date-range">${dateRange}</span>
-            <span class="show-days">${fmtDays(r.days)}</span>
+            ${daysLabel}
           </div>
           <div class="show-event">
             ${typeLabel}
@@ -119,7 +137,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
             <p class="show-venue">${r.venue}</p>
             <p class="show-location">${r.location}</p>
           </div>
-          <div class="show-action">${ticketBtn}</div>
+          <div class="show-action">${actionBtn}</div>
         </article>`;
     }).join('');
     container.innerHTML = html;
@@ -141,7 +159,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
 
       if (rows.length < 2) { renderEmpty(container); return; }
 
-      // Row 0 is headers: display, start_date, end_date, days, time, event_type, event_name, location, venue, booking_link
+      // Row 0 is headers: display, start_date, end_date, days, time, event_type, event_name, location, venue, booking_link, info_link
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -157,6 +175,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
           venue: r[8] ?? '',
           location: r[7] ?? '',
           link: r[9] ?? '',
+          infoLink: r[10] ?? '',
         }))
         .filter(r => r.end >= today)
         .sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -197,9 +216,10 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
     text-underline-offset: 3px;
   }
 
+  /* Fixed fractions (not auto) so columns line up across cards */
   :global(.show-card) {
     display: grid;
-    grid-template-columns: 1fr 1fr auto auto;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 1fr) 175px;
     align-items: center;
     gap: 2rem;
     padding: 1.5rem 0;
@@ -272,10 +292,11 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
   }
 
   :global(.btn-ticket) {
-    display: inline-block;
+    display: block;
+    text-align: center;
     border: 1.5px solid var(--color-text);
     color: var(--color-text);
-    padding: 0.6rem 1.4rem;
+    padding: 0.6rem 0.5rem;
     font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.06em;
@@ -284,10 +305,26 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
     transition: background 0.2s, color 0.2s, transform 0.15s;
   }
 
-  :global(.btn-ticket:hover) {
+  :global(a.btn-ticket:hover) {
     background: var(--color-text);
     color: var(--color-bg);
     transform: translateY(-1px);
+  }
+
+  :global(.btn-info) {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  :global(a.btn-info:hover) {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  :global(.btn-soon) {
+    border-color: var(--color-border);
+    color: var(--color-muted);
+    cursor: default;
   }
 
   @media (max-width: 860px) {
@@ -304,6 +341,10 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
 
     :global(.show-info) {
       text-align: left;
+    }
+
+    :global(.show-action) {
+      grid-column: 1 / -1;
     }
   }
 

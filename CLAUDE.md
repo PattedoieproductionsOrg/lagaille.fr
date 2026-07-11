@@ -67,9 +67,9 @@ Guide d'installation*.mhtml # Wispra setup guides (reference only)
 
 `Shows.astro` fetches a **Google Sheets CSV** at build/page-load time.
 
-CSV columns (in order): `display`, `start_date` (DD/MM/YYYY), `end_date`, `days`, `time` (HH:MM), `event_type`, `event_name`, `location`, `venue`, `booking_link`
+CSV columns (in order): `display`, `start_date` (DD/MM/YYYY), `end_date`, `days`, `time` (HH:MM), `event_type`, `event_name`, `location`, `venue`, `booking_link`, `info_link`
 
-Logic: filters `display=TRUE`, hides past events, sorts chronologically, formats dates in French.
+Logic: filters `display=TRUE`, hides past events, sorts chronologically, formats dates in French. Single-day events (start = end) show one date with weekday, no days label. Action button: `booking_link` → "Réserver", else `info_link` → "Plus d'infos", else greyed "Infos à venir".
 
 ## Blog & FAQ (Wispra API)
 
