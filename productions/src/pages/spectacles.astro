@@ -1,0 +1,122 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { spectacles } from "../data/spectacles.ts";
+---
+
+<Layout
+  title="Nos spectacles — Pattedoie Productions"
+  description="Les spectacles produits par Pattedoie Productions : stand-up et one-man-shows, disponibles à la programmation partout en France."
+>
+  <Header />
+  <main>
+    <PageHero
+      title="Nos spectacles"
+      lead="Des spectacles écrits avec soin et joués avec générosité, disponibles à la programmation pour les salles, festivals et événements."
+    />
+
+    <section class="liste">
+      <div class="container">
+        {
+          spectacles.map((spectacle) => (
+            <article class="fiche">
+              <Image
+                src={spectacle.affiche}
+                alt={`Affiche du spectacle ${spectacle.titre}`}
+                width={700}
+                format="webp"
+              />
+              <div class="fiche-body">
+                <h2>{spectacle.titre}</h2>
+                <p class="meta">
+                  {spectacle.duree} · {spectacle.publicCible}
+                </p>
+                <p class="pitch">{spectacle.pitch}</p>
+                <div class="actions">
+                  <a href="/contact" class="btn">
+                    Programmer ce spectacle
+                  </a>
+                  {spectacle.siteUrl && (
+                    <a
+                      href={spectacle.siteUrl}
+                      class="btn btn-outline"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Voir les dates
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))
+        }
+        <p class="teaser">D'autres créations sont en préparation — restez à l'écoute.</p>
+      </div>
+    </section>
+
+    <CtaBand title="Vous programmez une salle ou un festival ?" ctaLabel="Parlons-en" />
+  </main>
+</Layout>
+
+<style>
+  .liste {
+    padding: var(--section-padding);
+  }
+
+  .fiche {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .fiche :global(img) {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+
+  .meta {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .pitch {
+    margin-top: 1.25rem;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    max-width: 560px;
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .teaser {
+    margin-top: 4rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 800px) {
+    .fiche {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

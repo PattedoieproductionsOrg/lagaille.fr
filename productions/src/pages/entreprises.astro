@@ -1,0 +1,153 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+
+const offres = [
+  {
+    titre: "Soirée d'entreprise",
+    texte:
+      "Un plateau d'humour clé en main pour votre séminaire, votre soirée annuelle ou votre convention. Nous gérons les artistes, la technique et le déroulé.",
+  },
+  {
+    titre: "Événement privé",
+    texte:
+      "Anniversaire, mariage, association : privatisez un spectacle ou composez une soirée à votre image, dans votre lieu ou dans une salle partenaire.",
+  },
+  {
+    titre: "Format sur-mesure",
+    texte:
+      "Sketch écrit pour votre équipe, animation de convention, stand-up « maison » : nous créons un format unique à partir de votre brief.",
+  },
+];
+
+const etapes = [
+  {
+    titre: "Vous nous écrivez",
+    texte: "Parlez-nous de votre événement : date, lieu, public, envies.",
+  },
+  {
+    titre: "On construit ensemble",
+    texte: "Nous vous proposons un format, des artistes et un budget clair.",
+  },
+  {
+    titre: "On monte sur scène",
+    texte: "Le jour J, nous nous occupons de tout. Vous, vous riez.",
+  },
+];
+---
+
+<Layout
+  title="Entreprises — Pattedoie Productions"
+  description="Spectacles d'humour pour entreprises et événements privés : soirées clé en main, formats sur-mesure, plateaux de stand-up."
+>
+  <Header />
+  <main>
+    <PageHero
+      title="Entreprises"
+      lead="L'humour est un formidable outil de cohésion. Offrez un vrai moment de rire à vos équipes ou à vos invités."
+    />
+
+    <section class="offres">
+      <div class="container">
+        <div class="offres-grid">
+          {
+            offres.map((offre) => (
+              <article class="offre">
+                <h2>{offre.titre}</h2>
+                <p>{offre.texte}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="etapes">
+      <div class="container">
+        <h2>Comment ça marche</h2>
+        <ol>
+          {
+            etapes.map((etape, i) => (
+              <li>
+                <span class="numero">{i + 1}</span>
+                <h3>{etape.titre}</h3>
+                <p>{etape.texte}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <CtaBand title="Un événement en tête ? Demandez-nous un devis." ctaLabel="Demander un devis" />
+  </main>
+</Layout>
+
+<style>
+  .offres {
+    padding: var(--section-padding);
+  }
+
+  .offres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .offre {
+    padding: 2rem;
+    border: 1px solid var(--color-border);
+    border-top: 4px solid var(--color-accent);
+  }
+
+  .offre h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .offre p {
+    color: var(--color-muted);
+  }
+
+  .etapes {
+    background: var(--color-surface);
+    padding: var(--section-padding);
+  }
+
+  .etapes h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin-bottom: 2.5rem;
+  }
+
+  ol {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    background: var(--color-accent);
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    border-radius: 50%;
+  }
+
+  li h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  li p {
+    color: var(--color-muted);
+  }
+</style>

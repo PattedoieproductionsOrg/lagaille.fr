@@ -1,8 +1,13 @@
 # Pattedoie – Context for Claude
 
-## What This Project Is
+## What This Repo Is
 
-Static showcase website for **La Gaille**, a French stand-up comedian based in Lyon.
+**Two independent Astro sites** live in this repo:
+
+1. **lagaille.fr** (repo root) — showcase site for **La Gaille**, French stand-up comedian based in Lyon. This is the main project; everything below describes it unless stated otherwise.
+2. **productions.lagaille.fr** (`productions/` subfolder) — showcase site for **Pattedoie Productions**, the production company. Fully independent Astro project (own `package.json`, lockfile, `node_modules`, tsconfig — no npm workspaces, no shared imports; shared assets/patterns are *copied*). See "Productions Site" section at the bottom.
+
+Root site facts:
 - Show: *"Entre Rire et Réalité"* (60 min, all ages)
 - Production company: **Pattedoie Productions**
 - Live at: `https://lagaille.fr`
@@ -45,9 +50,8 @@ src/
 public/
   photo_la_gaille_1.jpg     # Hero photo
   affiche.jpg               # Show poster
-inspirations/
-  dossier_de_presse.md      # Press kit (French) — useful for content
 Guide d'installation*.mhtml # Wispra setup guides (reference only)
+productions/                # Independent site for Pattedoie Productions — see section below
 ```
 
 ## Design System
@@ -93,3 +97,14 @@ Blog and FAQ content comes from **Wispra** (`https://api.wispra.fr`), fetched at
 - French language throughout (`lang="fr"` on `<html>`)
 - No first-party client-side JS except: Header scroll detection, Shows CSV fetch (third-party: GA + Wispra pixel)
 - Responsive breakpoints: 800px (Bio), 680px (Header mobile, Contact grid)
+
+## Productions Site (`productions/`)
+
+Showcase site for **Pattedoie Productions** at `https://productions.lagaille.fr` (temporary domain — a dedicated pattedoie domain may replace it later).
+
+- **Independent Astro v5 project**: run `npm install` / `npm run dev` / `npm run build` *inside* `productions/`. It never touches the root project (root `tsconfig.json` excludes `productions/`).
+- **Structure**: multi-page — `/` (accueil), `/spectacles`, `/artistes`, `/entreprises`, `/contact`. Content data lives in `productions/src/data/{spectacles,artistes}.ts` (typed arrays — append entries to extend). Images in `productions/src/assets/` served via `astro:assets` `<Image>`.
+- **Design**: same token/scoped-CSS pattern as root, different identity — yellow accent `#f2c200` (from the logo `favicon.png`), display font Archivo, body Inter. No GA, no Wispra pixel.
+- **Deployment**: `.github/workflows/deploy-productions.yml` (triggers only on `productions/**` changes) builds the site and pushes `dist/` to the separate repo `PattedoieproductionsOrg/productions.lagaille.fr` (branch `gh-pages`) via `peaceiris/actions-gh-pages` + deploy key (secret `PRODUCTIONS_DEPLOY_KEY`), because GitHub Pages allows only one site/domain per repo (taken by lagaille.fr). Custom domain comes from `productions/public/CNAME`.
+- **Domain swap later**: edit `productions/public/CNAME` + `site` in `productions/astro.config.mjs` + robots.txt sitemap URL, add DNS, update Pages cname on the target repo, redeploy.
+- The root workflow `deploy.yml` is untouched and still triggers on **every** push to `main` (including productions-only commits — harmless, refreshes Wispra content).

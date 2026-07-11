@@ -1,0 +1,140 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import { artistes } from "../data/artistes.ts";
+---
+
+<Layout
+  title="Nos artistes — Pattedoie Productions"
+  description="Les artistes accompagnés par Pattedoie Productions : humoristes et talents du stand-up."
+>
+  <Header />
+  <main>
+    <PageHero
+      title="Nos artistes"
+      lead="Les talents que nous accompagnons, de l'écriture à la scène."
+    />
+
+    <section class="grille-section">
+      <div class="container">
+        <div class="grille">
+          {
+            artistes.map((artiste) => (
+              <article class="carte">
+                <Image
+                  src={artiste.photo}
+                  alt={`Portrait de ${artiste.nom}`}
+                  width={700}
+                  format="webp"
+                />
+                <div class="carte-body">
+                  <h2>{artiste.nom}</h2>
+                  <p class="role">{artiste.role}</p>
+                  <p class="bio">{artiste.bio}</p>
+                  <div class="liens">
+                    {artiste.siteUrl && (
+                      <a href={artiste.siteUrl} target="_blank" rel="noopener">
+                        Site officiel
+                      </a>
+                    )}
+                    {artiste.instagram && (
+                      <a href={artiste.instagram} target="_blank" rel="noopener">
+                        Instagram
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+
+        <aside class="callout">
+          <h2>Vous êtes artiste ?</h2>
+          <p>
+            Vous écrivez, vous jouez, vous cherchez une production pour porter
+            votre projet ? Écrivez-nous, nous lisons tout.
+          </p>
+          <a href="/contact" class="btn btn-outline">Nous écrire</a>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .grille-section {
+    padding: var(--section-padding);
+  }
+
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .carte {
+    border: 1px solid var(--color-border);
+  }
+
+  .carte :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .carte-body {
+    padding: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .role {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .bio {
+    margin-top: 1rem;
+    color: var(--color-muted);
+  }
+
+  .liens {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .liens a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+  }
+
+  .callout {
+    margin-top: 4rem;
+    padding: 2.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .callout h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  .callout p {
+    max-width: 560px;
+    color: var(--color-muted);
+    margin-bottom: 1.5rem;
+  }
+</style>

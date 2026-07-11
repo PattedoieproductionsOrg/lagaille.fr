@@ -1,0 +1,238 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import CtaBand from "../components/CtaBand.astro";
+import logo from "../assets/logo.png";
+import { spectacles } from "../data/spectacles.ts";
+import { artistes } from "../data/artistes.ts";
+
+const spectacle = spectacles[0];
+const artiste = artistes[0];
+---
+
+<Layout title="Pattedoie Productions — Spectacles d'humour">
+  <Header />
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="overline">Production de spectacles d'humour</p>
+          <h1>Faire rire,<br />sérieusement.</h1>
+          <p class="hero-lead">
+            Pattedoie Productions produit et diffuse des spectacles de stand-up,
+            de Lyon à toute la France. De la création à la scène, nous
+            accompagnons les artistes et les organisateurs à chaque étape.
+          </p>
+          <div class="hero-ctas">
+            <a href="/spectacles" class="btn">Nos spectacles</a>
+            <a href="/contact" class="btn btn-outline">Nous contacter</a>
+          </div>
+        </div>
+        <Image src={logo} alt="Logo Pattedoie Productions" width={280} class="hero-logo" />
+      </div>
+    </section>
+
+    <section class="maison">
+      <div class="container">
+        <h2>La maison</h2>
+        <p>
+          Née à Lyon autour du spectacle « Entre Rire et Réalité », Pattedoie
+          Productions est une maison de production indépendante dédiée à
+          l'humour. Nous croyons aux spectacles écrits avec soin, joués avec
+          générosité, et produits avec exigence — pour les salles, les
+          festivals et les entreprises.
+        </p>
+      </div>
+    </section>
+
+    <section class="featured">
+      <div class="container featured-grid">
+        <a href="/spectacles" class="card">
+          <Image src={spectacle.affiche} alt={`Affiche du spectacle ${spectacle.titre}`} width={700} format="webp" />
+          <div class="card-body">
+            <p class="overline">Spectacle</p>
+            <h3>{spectacle.titre}</h3>
+            <p>{spectacle.duree} · {spectacle.publicCible}</p>
+            <span class="card-link">Découvrir le spectacle</span>
+          </div>
+        </a>
+        <a href="/artistes" class="card">
+          <Image src={artiste.photo} alt={`Portrait de ${artiste.nom}`} width={700} format="webp" />
+          <div class="card-body">
+            <p class="overline">Artiste</p>
+            <h3>{artiste.nom}</h3>
+            <p>{artiste.role}</p>
+            <span class="card-link">Voir nos artistes</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="entreprises-teaser">
+      <div class="container teaser-inner">
+        <div>
+          <h2>Entreprises &amp; événements privés</h2>
+          <p>
+            Un plateau d'humour pour votre séminaire, une soirée sur mesure,
+            un spectacle privatisé : nous construisons le format avec vous.
+          </p>
+        </div>
+        <a href="/entreprises" class="btn btn-outline">En savoir plus</a>
+      </div>
+    </section>
+
+    <CtaBand />
+  </main>
+</Layout>
+
+<style>
+  .hero {
+    padding: calc(68px + 5rem) 0 5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-logo {
+    justify-self: center;
+    height: auto;
+  }
+
+  .overline {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-lead {
+    margin-top: 1.5rem;
+    max-width: 540px;
+    color: var(--color-muted);
+    font-size: 1.1rem;
+  }
+
+  .hero-ctas {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .maison {
+    background: var(--color-surface);
+    padding: var(--section-padding);
+  }
+
+  .maison h2,
+  .entreprises-teaser h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .maison p {
+    max-width: 720px;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+  }
+
+  .featured {
+    padding: var(--section-padding);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .card {
+    border: 1px solid var(--color-border);
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .card :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-body .overline {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-body h3 {
+    font-size: 1.4rem;
+  }
+
+  .card-body p {
+    color: var(--color-muted);
+    margin-top: 0.25rem;
+  }
+
+  .card-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+  }
+
+  .entreprises-teaser {
+    background: var(--color-surface);
+    padding: var(--section-padding);
+  }
+
+  .teaser-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .teaser-inner p {
+    max-width: 560px;
+    color: var(--color-muted);
+  }
+
+  @media (max-width: 800px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-logo {
+      display: none;
+    }
+
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+---
+
+<Layout
+  title="Contact — Pattedoie Productions"
+  description="Contactez Pattedoie Productions : programmation de spectacles, événements d'entreprise, projets d'artistes."
+>
+  <Header />
+  <main>
+    <PageHero
+      title="Contact"
+      lead="Programmation, événement d'entreprise, projet d'artiste : écrivez-nous, nous répondons sous 48 h."
+    />
+
+    <section class="contact">
+      <div class="container">
+        <div class="canaux">
+          <a href="mailto:julien.gallego.pro@gmail.com" class="btn email">
+            julien.gallego.pro@gmail.com
+          </a>
+          <a
+            href="https://www.instagram.com/la_gaille_/"
+            class="btn btn-outline"
+            target="_blank"
+            rel="noopener"
+          >
+            Instagram — @la_gaille_
+          </a>
+        </div>
+        <p class="note">
+          Pour une demande de programmation, précisez la date, le lieu et la
+          jauge envisagée — vous gagnerez un aller-retour.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .contact {
+    padding: var(--section-padding);
+  }
+
+  .canaux {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .email {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 1rem;
+  }
+
+  .note {
+    margin-top: 2.5rem;
+    max-width: 560px;
+    color: var(--color-muted);
+  }
+</style>

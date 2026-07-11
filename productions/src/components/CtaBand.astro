@@ -1,0 +1,58 @@
+---
+interface Props {
+  title?: string;
+  ctaLabel?: string;
+}
+
+const {
+  title = "Un projet, une date, une salle ? Parlons-en.",
+  ctaLabel = "Nous contacter",
+} = Astro.props;
+---
+
+<section class="cta-band">
+  <div class="container">
+    <h2>{title}</h2>
+    <a href="/contact" class="cta">{ctaLabel}</a>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    background: var(--color-cta-bg);
+    color: var(--color-cta-text);
+    padding: 4rem 1.5rem;
+  }
+
+  .cta-band .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .cta {
+    display: inline-block;
+    flex-shrink: 0;
+    background: var(--color-accent);
+    color: var(--color-text);
+    padding: 0.8rem 1.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background 0.2s,
+      transform 0.15s;
+  }
+
+  .cta:hover {
+    background: #ffd83d;
+    transform: translateY(-1px);
+  }
+</style>

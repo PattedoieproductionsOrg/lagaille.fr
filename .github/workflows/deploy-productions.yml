@@ -1,0 +1,48 @@
+name: Deploy Pattedoie Productions
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'productions/**'
+      - '.github/workflows/deploy-productions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-productions
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: productions/package-lock.json
+
+      - name: Install
+        run: npm ci
+        working-directory: productions
+
+      - name: Build
+        run: npm run build
+        working-directory: productions
+
+      - name: Deploy to productions.lagaille.fr repo
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.PRODUCTIONS_DEPLOY_KEY }}
+          external_repository: PattedoieproductionsOrg/productions.lagaille.fr
+          publish_branch: gh-pages
+          # relatif à la racine du workspace, pas au working-directory
+          publish_dir: ./productions/dist
+          force_orphan: true

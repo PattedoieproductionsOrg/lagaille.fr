@@ -1,0 +1,165 @@
+---
+import Footer from "../components/Footer.astro";
+import affiche from "../assets/affiche.jpg";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Pattedoie Productions — production et diffusion de spectacles d'humour, à Lyon et partout en France.",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(affiche.src, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Pattedoie Productions",
+  url: Astro.site?.href,
+  logo: new URL("/favicon.png", Astro.site).href,
+  email: "julien.gallego.pro@gmail.com",
+  description:
+    "Société de production de spectacles d'humour : stand-up, one-man-shows et événements sur mesure.",
+  sameAs: ["https://www.instagram.com/la_gaille_/", "https://lagaille.fr"],
+};
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalURL} />
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <!-- Données structurées JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #f7f5ef;
+    --color-text: #141414;
+    --color-muted: #6b6b6b;
+    --color-accent: #f2c200;
+    --color-accent-text: #8a6d00;
+    --color-border: #e9e7e1;
+    --color-cta-bg: #141414;
+    --color-cta-text: #ffffff;
+    --max-width: 1100px;
+    --section-padding: 5rem 1.5rem;
+    --font-display: "Archivo", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--color-cta-bg);
+    color: var(--color-cta-text);
+    padding: 0.8rem 1.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background 0.2s,
+      transform 0.15s;
+  }
+
+  .btn:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--color-text);
+  }
+
+  .btn-outline:hover {
+    background: var(--color-text);
+    color: var(--color-cta-text);
+  }
+
+  @media (max-width: 600px) {
+    :root {
+      --section-padding: 3rem 1.25rem;
+    }
+  }
+</style>
