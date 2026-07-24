@@ -13,9 +13,41 @@ try {
   error = e.message;
   console.error("Erreur:", e);
 }
+
+const SITE = "https://lagaille.fr";
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": `${SITE}/blog#blog`,
+  url: `${SITE}/blog`,
+  name: "Blog de La Gaille",
+  description:
+    "Anecdotes, coulisses et réflexions de La Gaille, humoriste stand-up à Lyon.",
+  inLanguage: "fr-FR",
+  isPartOf: { "@id": `${SITE}/#website` },
+  author: { "@id": `${SITE}/#person` },
+  publisher: { "@id": `${SITE}/#organization` },
+  blogPost: articles.slice(0, 25).map((a) => ({
+    "@type": "BlogPosting",
+    headline: a.title,
+    description: a.description,
+    url: `${SITE}/blog/${a.slug}`,
+    datePublished: a.publishedDate,
+  })),
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+    { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE}/blog` },
+  ],
+};
 ---
 
-<Layout title="Blog – La Gaille" description="Découvrez les articles de La Gaille — anecdotes, coulisses et réflexions d'un humoriste stand-up lyonnais.">
+<Layout title="Blog de La Gaille — Humour & stand-up à Lyon" description="Découvrez les articles de La Gaille — anecdotes, coulisses et réflexions d'un humoriste stand-up à Lyon.">
   <Header />
   <main>
     <section class="blog-section">
@@ -63,6 +95,10 @@ try {
       </div>
     </section>
   </main>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
 </Layout>
 
 <style>

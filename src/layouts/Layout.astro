@@ -1,52 +1,82 @@
 ---
+import { getImage } from "astro:assets";
+import heroImage from "../assets/photo_la_gaille_1.jpg";
+
 interface Props {
   title: string;
   description?: string;
+  ogType?: string;
 }
 
 const {
   title,
-  description = "La Gaille, humoriste stand-up lyonnais. One-man-show « Entre Rire et Réalité ».",
+  description = "La Gaille, humoriste stand-up à Lyon. One-man-show « Entre Rire et Réalité ».",
+  ogType = "website",
 } = Astro.props;
 
+const SITE = (Astro.site?.href ?? "https://lagaille.fr/").replace(/\/$/, "");
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL("/photo_la_gaille_1.jpg", Astro.site);
 
+// Image Open Graph optimisée (1200×630) générée au build — évite de servir
+// la photo source de plusieurs Mo aux scrapers sociaux et aux aperçus IA.
+const og = await getImage({
+  src: heroImage,
+  width: 1200,
+  height: 630,
+  fit: "cover",
+  position: "top",
+  format: "jpeg",
+});
+const ogImageURL = new URL(og.src, Astro.site);
+
+// Graphe d'entités sitewide : présent sur TOUTES les pages pour consolider
+// l'entité « La Gaille » aux yeux de Google et des moteurs génératifs (GEO).
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      url: `${SITE}/`,
+      name: "La Gaille — Humoriste stand-up à Lyon",
+      inLanguage: "fr-FR",
+      publisher: { "@id": `${SITE}/#organization` },
+      about: { "@id": `${SITE}/#person` },
+    },
+    {
       "@type": "Person",
+      "@id": `${SITE}/#person`,
       name: "La Gaille",
-      url: "https://lagaille.fr",
+      url: `${SITE}/`,
       image: ogImageURL.href,
       description:
-        "Humoriste stand-up lyonnais, auteur du one-man-show « Entre Rire et Réalité ».",
+        "Humoriste stand-up basé à Lyon, auteur et interprète du one-man-show « Entre Rire et Réalité ». Ancien ingénieur informaticien reconverti dans le stand-up.",
       jobTitle: "Humoriste",
+      knowsAbout: [
+        "Stand-up",
+        "One-man-show",
+        "Humour",
+        "Spectacle vivant",
+        "Café-théâtre",
+      ],
       address: {
         "@type": "PostalAddress",
         addressLocality: "Lyon",
+        addressRegion: "Auvergne-Rhône-Alpes",
         addressCountry: "FR",
       },
+      workLocation: { "@type": "Place", name: "Lyon, France" },
+      award: "Prix du public Kandidator 2024",
+      worksFor: { "@id": `${SITE}/#organization` },
       sameAs: ["https://www.instagram.com/la_gaille_/"],
     },
     {
-      "@type": "TheaterEvent",
-      name: "Entre Rire et Réalité",
-      description:
-        "One-man-show de La Gaille — 60 minutes, tout public. Un spectacle mêlant autodérision, observation du quotidien et réflexion sur les choix de vie.",
-      performer: {
-        "@type": "Person",
-        name: "La Gaille",
-      },
-      organizer: {
-        "@type": "Organization",
-        name: "Pattedoie Productions",
-        email: "julien.gallego.pro@gmail.com",
-      },
-      url: "https://lagaille.fr",
-      image: ogImageURL.href,
-      inLanguage: "fr",
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      name: "Pattedoie Productions",
+      url: `${SITE}/`,
+      email: "julien.gallego.pro@gmail.com",
+      description: "Production et diffusion de spectacles d'humour.",
     },
   ],
 };
@@ -58,14 +88,22 @@ const jsonLd = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
     <link rel="canonical" href={canonicalURL} />
     <!-- Open Graph -->
+    <meta property="og:site_name" content="La Gaille" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="La Gaille, humoriste stand-up à Lyon" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content="fr_FR" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -81,8 +119,10 @@ const jsonLd = {
       rel="stylesheet"
     />
     <title>{title}</title>
-    <!-- Données structurées JSON-LD -->
+    <!-- Données structurées JSON-LD (graphe d'entités sitewide) -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Données structurées spécifiques à la page (Event, BlogPosting, FAQPage, BreadcrumbList) -->
+    <slot name="head" />
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YB40WS0EY9"
     ></script>

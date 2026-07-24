@@ -1,14 +1,184 @@
 ---
+import { getImage } from "astro:assets";
+import afficheImage from "../assets/affiche.jpg";
+
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZxw2TESinTkb-5tZDLDmQdVPU9CNIEGcNMk0hCMHc1vOKwh5vyRPG-4u4gK2_8E1T0/pub?output=csv";
+const SITE = "https://lagaille.fr";
+
+// Image (poster) absolue pour le schéma Event
+const eventImg = await getImage({ src: afficheImage, width: 800, format: "jpeg" });
+const eventImageURL = new URL(eventImg.src, SITE + "/").href;
+
+// ── Parsing CSV (build-time, côté serveur) — mêmes règles que le rendu client ──
+function parseCSV(text: string): string[][] {
+  const rows: string[][] = [];
+  for (const line of text.trim().split("\n")) {
+    const fields: string[] = [];
+    let current = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+        else { inQuotes = !inQuotes; }
+      } else if (ch === "," && !inQuotes) {
+        fields.push(current.trim());
+        current = "";
+      } else { current += ch; }
+    }
+    fields.push(current.trim());
+    rows.push(fields);
+  }
+  return rows;
+}
+
+function parseFrDate(s: string): Date | null {
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  return new Date(+m[3], +m[2] - 1, +m[1], 12, 0, 0);
+}
+
+// DD/MM/YYYY (+ HH:MM) → ISO 8601 local pour startDate/endDate du schéma
+function toISO(d: string, t = ""): string | null {
+  const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  const base = `${m[3]}-${m[2]}-${m[1]}`;
+  return /^\d{2}:\d{2}$/.test(t) ? `${base}T${t}` : base;
+}
+
+function cap(s: string): string { return s.charAt(0).toUpperCase() + s.slice(1); }
+function fmtShort(d: Date): string { return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }); }
+function fmtSingle(d: Date): string { return cap(d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })); }
+function isSameDay(a: Date, b: Date): boolean { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+
+function fmtDays(days: string): string {
+  const d = days.trim().toLowerCase();
+  const map: Record<string, string> = {
+    dimanche: "Tous les dimanches", samedi: "Tous les samedis", vendredi: "Tous les vendredis",
+    mercredi: "Tous les mercredis", jeudi: "Tous les jeudis",
+  };
+  return map[d] ?? days.split(",").map((s) => s.trim()).join(", ");
+}
+
+type Show = {
+  start: Date; end: Date; startISO: string | null; endISO: string | null;
+  days: string; time: string; eventType: string; eventName: string;
+  venue: string; location: string; link: string; infoLink: string;
+  singleDay: boolean; dateRange: string; daysLabel: string; timeLabel: string;
+};
+
+// Fetch + parse au build. Le HTML contient donc les dates (crawlable + schéma
+// Event). Le script client re-fetch ensuite pour un affichage toujours à jour.
+let shows: Show[] = [];
+try {
+  const res = await fetch(CSV_URL);
+  if (res.ok) {
+    const rows = parseCSV(await res.text());
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    shows = rows.slice(1)
+      .filter((r) => r[0]?.toUpperCase() === "TRUE")
+      .map((r) => {
+        const start = parseFrDate(r[1] ?? "") ?? new Date(0);
+        const end = parseFrDate(r[2] ?? "") ?? new Date(0);
+        const singleDay = isSameDay(start, end);
+        const sameYear = start.getFullYear() === end.getFullYear();
+        const dateRange = singleDay
+          ? `${fmtSingle(start)} ${start.getFullYear()}`
+          : sameYear
+            ? `${fmtShort(start)} – ${fmtShort(end)} ${end.getFullYear()}`
+            : `${fmtShort(start)} ${start.getFullYear()} – ${fmtShort(end)} ${end.getFullYear()}`;
+        return {
+          start, end,
+          startISO: toISO(r[1] ?? "", r[4] ?? ""),
+          endISO: singleDay ? null : toISO(r[2] ?? ""),
+          days: r[3] ?? "", time: r[4] ?? "", eventType: r[5] ?? "", eventName: r[6] ?? "",
+          venue: r[8] ?? "", location: r[7] ?? "", link: r[9] ?? "", infoLink: r[10] ?? "",
+          singleDay,
+          dateRange,
+          daysLabel: singleDay ? "" : fmtDays(r[3] ?? ""),
+          timeLabel: (r[4] ?? "").replace(":", "h"),
+        } as Show;
+      })
+      .filter((r) => r.end >= today)
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
+  }
+} catch {
+  shows = [];
+}
+
+// Schéma Event (un par date) — permet les rich results Google et les réponses
+// des moteurs IA à « quand / où voir La Gaille ».
+const eventsJsonLd = shows.map((s) => ({
+  "@context": "https://schema.org",
+  "@type": "TheaterEvent",
+  name: s.eventName || "La Gaille — « Entre Rire et Réalité »",
+  description:
+    "One-man-show de La Gaille, humoriste stand-up à Lyon. « Entre Rire et Réalité » — 60 min, tout public.",
+  ...(s.startISO ? { startDate: s.startISO } : {}),
+  ...(s.endISO ? { endDate: s.endISO } : {}),
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  location: {
+    "@type": "Place",
+    name: s.venue || s.location || "Lyon",
+    address: {
+      "@type": "PostalAddress",
+      ...(s.venue ? { name: s.venue } : {}),
+      addressLocality: s.location || "Lyon",
+      addressCountry: "FR",
+    },
+  },
+  image: eventImageURL,
+  performer: { "@type": "Person", "@id": `${SITE}/#person`, name: "La Gaille" },
+  organizer: { "@type": "Organization", "@id": `${SITE}/#organization`, name: "Pattedoie Productions" },
+  ...(s.link
+    ? { offers: { "@type": "Offer", url: s.link, availability: "https://schema.org/InStock" } }
+    : {}),
+  url: s.link || s.infoLink || `${SITE}/#dates`,
+  inLanguage: "fr-FR",
+}));
 ---
 
 <section id="dates">
   <div class="container">
     <h2>Dates</h2>
     <div id="shows-list" data-csv-url={CSV_URL}>
-      <p class="shows-loading">Chargement des dates…</p>
+      {shows.length === 0 ? (
+        <p class="shows-empty">Aucune date à venir pour le moment.<br />Revenez bientôt !</p>
+      ) : (
+        shows.map((s) => (
+          <article class="show-card">
+            <div class="show-dates">
+              <span class="date-range">{s.dateRange}</span>
+              {s.daysLabel && <span class="show-days">{s.daysLabel}</span>}
+            </div>
+            <div class="show-event">
+              {s.eventType && <span class="event-type">{s.eventType}</span>}
+              <p class="event-name">{s.eventName}</p>
+            </div>
+            <div class="show-info">
+              <p class="show-time">{s.timeLabel}</p>
+              <p class="show-venue">{s.venue}</p>
+              <p class="show-location">{s.location}</p>
+            </div>
+            <div class="show-action">
+              {s.link ? (
+                <a href={s.link} class="btn-ticket" target="_blank" rel="noopener">Réserver →</a>
+              ) : s.infoLink ? (
+                <a href={s.infoLink} class="btn-ticket btn-info" target="_blank" rel="noopener">Plus d'infos →</a>
+              ) : (
+                <span class="btn-ticket btn-soon">Infos à venir</span>
+              )}
+            </div>
+          </article>
+        ))
+      )}
     </div>
   </div>
+  {eventsJsonLd.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify(eventsJsonLd)} />
+  )}
 </section>
 
 <script>
@@ -183,7 +353,9 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTOSo-EQn7HbZx
       if (shows.length === 0) { renderEmpty(container); return; }
       renderShows(container, shows);
     } catch {
-      renderError(container);
+      // En cas d'échec réseau, on conserve les dates rendues au build
+      // (SSR) plutôt que d'afficher une erreur à la place.
+      if (!container.querySelector('.show-card')) renderError(container);
     }
   }
 

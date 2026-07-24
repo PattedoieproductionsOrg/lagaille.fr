@@ -3,7 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import { getArticle, getArticles, formatDate, calculateReadingTime } from '../../utils/blog-api';
 import { marked } from 'marked';
-import type { WithContext, Thing } from 'schema-dts';
+import { getImage } from 'astro:assets';
+import heroImage from '../../assets/photo_la_gaille_1.jpg';
 
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -42,21 +43,43 @@ try {
 
 const readingTime = calculateReadingTime(article.contentPublic || "");
 
-const schema: WithContext<Thing> = {
+const SITE = "https://lagaille.fr";
+const ogImg = await getImage({
+  src: heroImage, width: 1200, height: 630, fit: "cover", position: "top", format: "jpeg",
+});
+const articleImage = new URL(ogImg.src, SITE + "/").href;
+
+const articleSchema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "@id": Astro.url.href,
+  "@id": Astro.url.href + "#article",
   url: Astro.url.href,
+  mainEntityOfPage: Astro.url.href,
   headline: article.title,
   description: article.description,
   keywords: article.keywords,
+  image: articleImage,
   datePublished: article.publishedDate,
   dateModified: article.updatedAt,
   inLanguage: "fr-FR",
+  author: { "@type": "Person", "@id": `${SITE}/#person`, name: "La Gaille" },
+  publisher: { "@type": "Organization", "@id": `${SITE}/#organization`, name: "Pattedoie Productions" },
+  isPartOf: { "@id": `${SITE}/#website` },
+  about: { "@id": `${SITE}/#person` },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+    { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE}/blog` },
+    { "@type": "ListItem", position: 3, name: article.title, item: Astro.url.href },
+  ],
 };
 ---
 
-<Layout title={`${article.title} – La Gaille`} description={article.description}>
+<Layout title={`${article.title} – La Gaille`} description={article.description} ogType="article">
   <Header />
   <main>
     <article class="article-page">
@@ -78,7 +101,10 @@ const schema: WithContext<Thing> = {
       </div>
     </article>
   </main>
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} slot="head" />
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
 </Layout>
 
 <style>

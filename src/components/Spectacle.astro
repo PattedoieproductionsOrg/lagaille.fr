@@ -1,11 +1,22 @@
 ---
+import { Image } from "astro:assets";
+import afficheImage from "../assets/affiche.jpg";
 ---
 
 <section id="spectacle">
   <div class="container">
     <div class="spectacle-grid">
       <div class="spectacle-poster">
-        <img src="/affiche.jpg" alt="Affiche du spectacle Entre Rire et Réalité" />
+        <Image
+          src={afficheImage}
+          alt="Affiche du spectacle « Entre Rire et Réalité » de La Gaille, humoriste à Lyon"
+          width={560}
+          height={792}
+          format="webp"
+          quality={78}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div class="spectacle-info">
         <h2>Le spectacle</h2>

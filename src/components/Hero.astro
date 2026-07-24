@@ -1,10 +1,22 @@
 ---
+import { Image } from "astro:assets";
+import heroImage from "../assets/photo_la_gaille_1.jpg";
 ---
 
 <section class="hero">
   <div class="hero-photo">
     <div class="hero-image">
-      <img src="/photo_la_gaille_1.jpg" alt="La Gaille, humoriste stand-up" />
+      <Image
+        src={heroImage}
+        alt="La Gaille, humoriste stand-up sur scène à Lyon"
+        widths={[768, 1280, 1920, 2560]}
+        sizes="100vw"
+        format="webp"
+        quality={72}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
       <div class="hero-vignette"></div>
       <div class="hero-title">
         <h1 class="photo-title-text">La Gaille</h1>

@@ -44,14 +44,30 @@ if (faqData) {
   }
 }
 
+const SITE = "https://lagaille.fr";
+
 const schema: WithContext<FAQPage> = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "@id": `${SITE}/faq#faqpage`,
+  name: "FAQ — La Gaille, humoriste stand-up à Lyon",
+  inLanguage: "fr-FR",
+  isPartOf: { "@id": `${SITE}/#website` },
+  about: { "@id": `${SITE}/#person` },
   mainEntity: schemaQuestions,
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+    { "@type": "ListItem", position: 2, name: "FAQ", item: `${SITE}/faq` },
+  ],
 };
 ---
 
-<Layout title="FAQ – La Gaille" description="Trouvez les réponses à vos questions sur La Gaille, ses spectacles et ses représentations.">
+<Layout title="FAQ — La Gaille, humoriste stand-up à Lyon" description="Trouvez les réponses à vos questions sur La Gaille, humoriste à Lyon : spectacles, réservations, tarifs et représentations.">
   <Header />
   <main>
     <section class="faq-section">
@@ -123,7 +139,10 @@ const schema: WithContext<FAQPage> = {
       </div>
     </section>
   </main>
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} slot="head" />
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
 </Layout>
 
 <style>
